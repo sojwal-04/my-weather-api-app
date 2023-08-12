@@ -7,6 +7,13 @@
     <link rel="icon" href="assets/favicon.jpg" />
     <link rel="stylesheet" href="styles.css" />
     <title>Weather-App</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,700;1,800&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div class="wrapper">
@@ -19,16 +26,16 @@
 
       <div class="weather-container">
         <!-- Grant Location Container -->
-        <div class="grant-location-container">
+        <div class="sub-container grant-location-container">
           <img
             src="assets/location.png"
-            width="80"
+            width="80"  
             height="80"
             loading="lazy"
           />
           <p>Grant Location Access</p>
           <p>Allow Access to get Weather Information</p>
-          <button class="btn" data-grantAccess>Grant Access</button>
+          <button class="btn" type="submit" data-grantAccess>Grant Access</button>
         </div>
 
         <!-- Search Weather Form -->
@@ -55,7 +62,7 @@
         </div>
 
         <!-- Show Weather Info -->
-        <div class="user-info-container">
+        <div class="sub-container user-info-container">
           <!-- city name and flag -->
           <div class="name">
             <p data-cityName></p>
@@ -90,8 +97,11 @@
               <p data-cloudiness></p>
             </div>
           </div>
+
         </div>
+
       </div>
+
     </div>
 
     <!-- Scripts -->

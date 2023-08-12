@@ -7,7 +7,7 @@ const userContainer = document.querySelector(".weather-container");
 const grantAccessContainer = document.querySelector(
   ".grant-location-container"
 );
-const searchForm = document.querySelector(".form-container");
+const searchForm = document.querySelector("[data-searchForm]");
 const loadingScreen = document.querySelector(".loading-container");
 const userInfoContainer = document.querySelector(".user-info-container");
 
@@ -21,7 +21,7 @@ oldTab.classList.add("current-tab");
 getFromSessionStorage();
 
 function switchTab(newTab) {
-  if (newTab !== oldTab) {
+  if (newTab != oldTab) {
     oldTab.classList.remove("current-tab");
     oldTab = newTab;
     oldTab.classList.add("current-tab");
@@ -64,7 +64,7 @@ function getFromSessionStorage() {
 }
 
 async function fetchUserWeatherInfo(coordinates) {
-  const { lattitude, longitude } = coordinates;
+  const { latitude, longitude } = coordinates;
 
   //Now make grantAccessContainer Invisible from screen
   grantAccessContainer.classList.remove("active");
@@ -73,7 +73,7 @@ async function fetchUserWeatherInfo(coordinates) {
 
   try {
     const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lattitude}&lon=${longitude}}&appid=${apikey}&units=metric`
+      `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}}&appid=${apikey}&units=metric`
     );
     const weatherInfo = await response.json();
 
@@ -83,10 +83,11 @@ async function fetchUserWeatherInfo(coordinates) {
   } catch (err) {
     loadingScreen.classList.remove("active");
     console.log("Error Found : ", err);
-    //Remaining maybe
+    //Remaining 
   }
 }
 
+//Render Information on UI
 function renderWeatherInfo(weatherInfo) {
   const cityName = document.querySelector("[data-cityName]");
   const countryIcon = document.querySelector("[data-countryIcon]");
@@ -101,10 +102,11 @@ function renderWeatherInfo(weatherInfo) {
 
   cityName.innerText = weatherInfo?.name;
   countryIcon.src = `https://flagcdn.com/144x108/${weatherInfo?.sys?.country.toLowerCase()}.png`;
-  desc.innerText = weatherInfo?.weather[0]?.description;
+  desc.innerText = weatherInfo?.weather?.[0]?.description;
   weatherIcon.src = `https://openweathermap.org/img/w/${weatherInfo?.weather?.[0]?.icon}.png`;
   temp.innerText = `${weatherInfo?.main?.temp} °C`;
-  windspeed.innerText = `${weatherInfo?.main?.humidity} %`;
+  windspeed.innerText = `${weatherInfo?.wind?.speed} m/s`;
+  humidity.innerText = `${weatherInfo?.main?.humidity} %`;
   cloudiness.innerText = `${weatherInfo?.clouds?.all} %`;
 }
 
@@ -112,13 +114,14 @@ function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition);
   } else {
-    alert("No Geolocation Support AVaiable");
+    alert("No Geolocation Support Available");
   }
 }
 
 function showPosition(position) {
+  
   const userCoordinates = {
-    lattitude: position.coords.lattitude,
+    latitude: position.coords.latitude,
     longitude: position.coords.longitude,
   };
 
