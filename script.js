@@ -11,6 +11,8 @@ const searchForm = document.querySelector("[data-searchForm]");
 const loadingScreen = document.querySelector(".loading-container");
 const userInfoContainer = document.querySelector(".user-info-container");
 
+const errorContainer = document.querySelector(".error-container");
+
 //Initial Variables needed
 
 let oldTab = userTab;
@@ -25,6 +27,7 @@ function switchTab(newTab) {
     oldTab.classList.remove("current-tab");
     oldTab = newTab;
     oldTab.classList.add("current-tab");
+    errorContainer.classList.remove("active");
 
     if (!searchForm.classList.contains("active")) {
       //If search form container is invisible, if yes make it visible
@@ -73,7 +76,7 @@ async function fetchUserWeatherInfo(coordinates) {
 
   try {
     const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}}&appid=${apikey}&units=metric`
+      `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apikey}&units=metric`
     );
     const weatherInfo = await response.json();
 
@@ -83,7 +86,8 @@ async function fetchUserWeatherInfo(coordinates) {
   } catch (err) {
     loadingScreen.classList.remove("active");
     console.log("Error Found : ", err);
-    //Remaining 
+    //Remaining
+    console.log("your location is not avialable");
   }
 }
 
@@ -119,7 +123,6 @@ function getLocation() {
 }
 
 function showPosition(position) {
-  
   const userCoordinates = {
     latitude: position.coords.latitude,
     longitude: position.coords.longitude,
@@ -138,7 +141,7 @@ const searchInput = document.querySelector("[data-searchInput]");
 searchForm.addEventListener("submit", (e) => {
   e.preventDefault();
   let cityName = searchInput.value;
-
+  errorContainer.classList.remove("active");
   if (cityName === "") return;
 
   fetchSearchWeatherInfo(cityName);
@@ -153,12 +156,21 @@ async function fetchSearchWeatherInfo(city) {
     const response = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apikey}&units=metric`
     );
-    const weatherInfo = await response.json();
-    loadingScreen.classList.remove("active");
-    userInfoContainer.classList.add("active");
-    renderWeatherInfo(weatherInfo);
+
+    if (response.ok) {
+      const weatherInfo = await response.json();
+      loadingScreen.classList.remove("active");
+      userInfoContainer.classList.add("active");
+      renderWeatherInfo(weatherInfo);
+    } else {
+      const errorData = await response.json();
+      loadingScreen.classList.remove("active");
+      const errorMessage = errorData.message || "City not found";
+      errorContainer.textContent = `Error: ${errorMessage}`;
+      userInfoContainer.classList.remove("active");
+      errorContainer.classList.add("active");
+    }
   } catch (err) {
-    console.log("Error Found : ", err);
-    //remaining maybe
+    console.log("Error Found:", err);
   }
 }
